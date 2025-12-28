@@ -11,6 +11,9 @@ import upload from "../config/multer.js";
 
 const router = express.Router();
 
+/* Preflight safety */
+router.options("*", (req, res) => res.sendStatus(204));
+
 router.get("/", adminProtect, getAllProducts);
 
 router.post(
