@@ -3,20 +3,20 @@ import Product from "../models/Product.js";
 /* ===============================
    GET ALL PRODUCTS (ADMIN)
 ================================ */
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     console.error("Fetch products error:", error);
-    res.status(500).json({ message: "Failed to fetch products" });
+    next(error);
   }
 };
 
 /* ===============================
    CREATE PRODUCT
 ================================ */
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
   try {
     const { name, price, description, sizes } = req.body;
 
@@ -28,51 +28,81 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ message: "Images required" });
     }
 
-    const images = req.files.map(
-      (file) => `/images/${file.filename}`
-    );
+    // ✅ Cloudinary URLs
+    const images = req.files.map((file) => file.path);
+
+    // ✅ Safe JSON parsing
+    let parsedDescription = [];
+    let parsedSizes = [];
+
+    if (description) {
+      try {
+        parsedDescription = JSON.parse(description);
+      } catch {
+        parsedDescription = [];
+      }
+    }
+
+    if (sizes) {
+      try {
+        parsedSizes = JSON.parse(sizes);
+      } catch {
+        parsedSizes = [];
+      }
+    }
 
     const product = await Product.create({
       name,
       price: Number(price),
-      description: description ? JSON.parse(description) : [],
-      sizes: sizes ? JSON.parse(sizes) : [],
+      description: parsedDescription,
+      sizes: parsedSizes,
       images,
     });
 
     res.status(201).json(product);
   } catch (error) {
     console.error("Create product error:", error);
-    res.status(500).json({ message: "Product creation failed" });
+    next(error); // 🔴 REQUIRED
   }
 };
 
 /* ===============================
    UPDATE PRODUCT
 ================================ */
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, price, description, sizes } = req.body;
 
-    const updates = {
-      ...(name && { name }),
-      ...(price && { price: Number(price) }),
-      ...(description && { description: JSON.parse(description) }),
-      ...(sizes && { sizes: JSON.parse(sizes) }),
-    };
+    const updates = {};
 
-    if (req.files?.length) {
-      updates.images = req.files.map(
-        (file) => `/images/${file.filename}`
-      );
+    if (name) updates.name = name;
+    if (price) updates.price = Number(price);
+
+    if (description) {
+      try {
+        updates.description = JSON.parse(description);
+      } catch {
+        updates.description = [];
+      }
     }
 
-    const product = await Product.findByIdAndUpdate(
-      id,
-      updates,
-      { new: true }
-    );
+    if (sizes) {
+      try {
+        updates.sizes = JSON.parse(sizes);
+      } catch {
+        updates.sizes = [];
+      }
+    }
+
+    // ✅ Cloudinary URLs on update
+    if (req.files && req.files.length > 0) {
+      updates.images = req.files.map((file) => file.path);
+    }
+
+    const product = await Product.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -81,14 +111,14 @@ export const updateProduct = async (req, res) => {
     res.json(product);
   } catch (error) {
     console.error("Update product error:", error);
-    res.status(500).json({ message: "Update failed" });
+    next(error);
   }
 };
 
 /* ===============================
    DELETE PRODUCT
 ================================ */
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
 
@@ -99,6 +129,6 @@ export const deleteProduct = async (req, res) => {
     res.json({ message: "Product deleted" });
   } catch (error) {
     console.error("Delete product error:", error);
-    res.status(500).json({ message: "Delete failed" });
+    next(error);
   }
 };
