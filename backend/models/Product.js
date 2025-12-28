@@ -10,10 +10,19 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true },
     price: { type: Number, required: true },
 
-    // ✅ IMAGE PATHS (served from /images)
-    images: [{ type: String, required: true }],
+    // ✅ At least ONE image required, variable length
+    images: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: function (v) {
+          return Array.isArray(v) && v.length > 0;
+        },
+        message: "At least one product image is required",
+      },
+    },
 
-    // ✅ 5-line description
+    // ✅ Description lines (1–5 allowed)
     description: {
       type: [String],
       required: true,
