@@ -23,8 +23,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* CORS */
-import cors from "cors";
+
 
 /* CORS — MUST BE FIRST */
 app.use(
