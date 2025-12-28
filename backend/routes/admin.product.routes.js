@@ -10,6 +10,9 @@ import adminProtect from "../middleware/admin.middleware.js";
 import upload from "../config/multer.js";
 
 const router = express.Router();
+router.get("/__test", (req, res) => {
+  res.json({ ok: true });
+});
 
 router.get("/", adminProtect, getAllProducts);
 
