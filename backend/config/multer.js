@@ -1,32 +1,15 @@
 import multer from "multer";
-import CloudinaryStorage from "multer-storage-cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "./cloudinary.js";
 
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary, // MUST be v2 instance
   params: {
     folder: "vestease-products",
     allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 
-const uploadInstance = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+const upload = multer({ storage });
 
-export default function upload(req, res, next) {
-  // ✅ Allow CORS preflight
-  if (req.method === "OPTIONS") return next();
-
-  uploadInstance.array("images", 5)(req, res, (err) => {
-    if (err) {
-      console.error("UPLOAD ERROR:", err);
-      return res.status(400).json({
-        message: "Image upload failed",
-        error: err.message,
-      });
-    }
-    next();
-  });
-}
+export default upload;
