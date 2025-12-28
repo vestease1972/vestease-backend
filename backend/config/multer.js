@@ -10,15 +10,23 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({
+const uploadInstance = multer({
   storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// ✅ Skip multer for CORS preflight
-export default function uploadMiddleware(req, res, next) {
+export default function upload(req, res, next) {
+  // ✅ Allow CORS preflight
   if (req.method === "OPTIONS") return next();
-  return upload.array("images", 5)(req, res, next);
+
+  uploadInstance.array("images", 5)(req, res, (err) => {
+    if (err) {
+      console.error("UPLOAD ERROR:", err);
+      return res.status(400).json({
+        message: "Image upload failed",
+        error: err.message,
+      });
+    }
+    next();
+  });
 }
