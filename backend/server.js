@@ -36,9 +36,19 @@ app.use(
       "https://vestease.in",
       "https://www.vestease.in"
     ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With"
+    ],
     credentials: true,
   })
 );
+
+// 🔑 VERY IMPORTANT: explicitly allow OPTIONS
+app.options("*", cors());
+
 app.use(express.json());
 
 /* ===============================
