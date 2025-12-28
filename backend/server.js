@@ -65,4 +65,28 @@ app.get("/", (req, res) => {
 connectDB();
 
 const PORT = process.env.PORT || 5000;
+/* =========================
+   GLOBAL ERROR HANDLER
+========================= */
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+
+  // Ensure CORS headers are present even on errors
+  res.setHeader("Access-Control-Allow-Origin", "https://vestease.in");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server error",
+  });
+});
+
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
