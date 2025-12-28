@@ -1,27 +1,26 @@
 import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import CloudinaryStorage from "multer-storage-cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "./cloudinary.js";
 
-/* ===============================
-   CLOUDINARY CONFIG
-================================ */
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-/* ===============================
-   STORAGE
-================================ */
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "vestease/products",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    folder: "vestease-products",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
 
-export default upload;
+// ✅ WRAPPER TO SKIP OPTIONS
+export default function uploadMiddleware(req, res, next) {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
+  return upload.array("images", 5)(req, res, next);
+}
