@@ -30,29 +30,27 @@ const __dirname = path.dirname(__filename);
 /* ===============================
    MIDDLEWARE
 ================================ */
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "https://vestease.in",
-        "https://www.vestease.in"
-      ];
+app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    req.headers.origin || "https://vestease.in"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
 
-      // allow server-to-server & Postman
-      if (!origin) return callback(null, true);
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-    optionsSuccessStatus: 204
-  })
-);
+  next();
+});
+
 
 
 
