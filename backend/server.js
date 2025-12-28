@@ -16,56 +16,34 @@ import adminStatsRoutes from "./routes/admin.stats.routes.js";
 import adminOrdersRoutes from "./routes/admin.orders.routes.js";
 import adminCouponRoutes from "./routes/admin.coupon.routes.js";
 
-
 dotenv.config();
-
 const app = express();
 
-/* ===============================
-   FIX __dirname FOR ES MODULES
-================================ */
+/* __dirname fix */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* ===============================
-   MIDDLEWARE
-================================ */
+/* CORS */
+app.use(
+  cors({
+    origin: ["https://vestease.in", "https://www.vestease.in"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+/* OPTIONS FIX */
 app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    req.headers.origin || "https://vestease.in"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-  );
-
   if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
+    res.sendStatus(200);
+  } else {
+    next();
   }
-
-  next();
 });
-
-
-
 
 app.use(express.json());
 
-/* ===============================
-   STATIC IMAGES (FIXED)
-   Folder: /images (ROOT LEVEL)
-   URL: http://localhost:5000/images/filename.jpg
-================================ */
-
-
-/* ===============================
-   ROUTES
-================================ */
+/* ROUTES */
 app.use("/api/auth", authRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/orders", orderRoutes);
@@ -78,24 +56,11 @@ app.use("/api/admin/stats", adminStatsRoutes);
 app.use("/api/admin/orders", adminOrdersRoutes);
 app.use("/api/admin/coupons", adminCouponRoutes);
 
-
-/* ===============================
-   TEST ROUTE
-================================ */
 app.get("/", (req, res) => {
   res.send("API running...");
 });
 
-/* ===============================
-   DATABASE
-================================ */
 connectDB();
 
-/* ===============================
-   SERVER
-================================ */
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
