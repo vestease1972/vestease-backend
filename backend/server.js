@@ -26,17 +26,20 @@ const __dirname = path.dirname(__filename);
 
 
 /* CORS — MUST BE FIRST */
+/* CORS FIRST */
 app.use(
   cors({
-    origin: "https://vestease.in",
+    origin: ["https://vestease.in", "https://www.vestease.in"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-/* Preflight support */
-app.options("*", cors());
+app.use(express.json());
+
+/* routes below */
+
 
 app.use(express.json());
 
