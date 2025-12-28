@@ -16,14 +16,14 @@ router.get("/", adminProtect, getAllProducts);
 router.post(
   "/",
   adminProtect,
-  upload.array("images", 5),
+  upload,
   createProduct
 );
 
 router.put(
   "/:id",
   adminProtect,
-  upload.array("images", 5),
+  upload,
   updateProduct
 );
 
