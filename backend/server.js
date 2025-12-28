@@ -24,22 +24,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* CORS */
+import cors from "cors";
+
+/* CORS — MUST BE FIRST */
 app.use(
   cors({
-    origin: ["https://vestease.in", "https://www.vestease.in"],
+    origin: "https://vestease.in",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-/* OPTIONS FIX */
-app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+/* Preflight support */
+app.options("*", cors());
 
 app.use(express.json());
 
