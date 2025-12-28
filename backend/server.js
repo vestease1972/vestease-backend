@@ -30,7 +30,15 @@ const __dirname = path.dirname(__filename);
 /* ===============================
    MIDDLEWARE
 ================================ */
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://vestease.com",
+      "https://www.vestease.com"
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 /* ===============================
