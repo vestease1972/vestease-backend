@@ -11,31 +11,39 @@ import upload from "../config/multer.js";
 
 const router = express.Router();
 
-/* TEST ROUTE (can keep or remove) */
+/* TEST ROUTE (optional) */
 router.get("/__test", (req, res) => {
   res.json({ ok: true });
 });
 
-/* GET ALL PRODUCTS */
+/* ===============================
+   GET ALL PRODUCTS
+================================ */
 router.get("/", adminProtect, getAllProducts);
 
-/* ✅ REAL CREATE PRODUCT */
+/* ===============================
+   CREATE PRODUCT
+================================ */
 router.post(
   "/",
   adminProtect,
-  upload.array("images", 5),
+  upload.array("images", 5), // ✅ middleware function
   createProduct
 );
 
-/* ✅ REAL UPDATE PRODUCT */
+/* ===============================
+   UPDATE PRODUCT
+================================ */
 router.put(
   "/:id",
   adminProtect,
-  upload,
+  upload.array("images", 5), // ✅ FIXED HERE
   updateProduct
 );
 
-/* DELETE PRODUCT */
+/* ===============================
+   DELETE PRODUCT
+================================ */
 router.delete("/:id", adminProtect, deleteProduct);
 
 export default router;
