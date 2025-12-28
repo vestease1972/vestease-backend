@@ -1,8 +1,6 @@
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
-import multerStorage from "multer-storage-cloudinary";
-
-const { CloudinaryStorage } = multerStorage;
+import CloudinaryStorage from "multer-storage-cloudinary";
 
 /* ===============================
    CLOUDINARY CONFIG
@@ -20,7 +18,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "vestease/products",
-    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
