@@ -1,8 +1,6 @@
 import multer from "multer";
-import pkg from "multer-storage-cloudinary";
+import CloudinaryStorage from "multer-storage-cloudinary";
 import cloudinary from "./cloudinary.js";
-
-const { CloudinaryStorage } = pkg;
 
 const storage = new CloudinaryStorage({
   cloudinary,
@@ -19,10 +17,8 @@ const upload = multer({
   },
 });
 
-// ✅ Skip multer during CORS preflight
+// ✅ Skip multer for CORS preflight
 export default function uploadMiddleware(req, res, next) {
-  if (req.method === "OPTIONS") {
-    return next();
-  }
+  if (req.method === "OPTIONS") return next();
   return upload.array("images", 5)(req, res, next);
 }
