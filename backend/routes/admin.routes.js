@@ -5,9 +5,7 @@ import Admin from "../models/Admin.js";
 
 const router = express.Router();
 
-/* =====================
-   ADMIN LOGIN
-===================== */
+/* ADMIN LOGIN */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
