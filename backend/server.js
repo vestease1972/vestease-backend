@@ -33,8 +33,8 @@ const __dirname = path.dirname(__filename);
 app.use(
   cors({
     origin: [
-      "https://vestease.com",
-      "https://www.vestease.com"
+      "https://vestease.in",
+      "https://www.vestease.in"
     ],
     credentials: true,
   })
