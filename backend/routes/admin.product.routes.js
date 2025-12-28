@@ -11,7 +11,7 @@ import upload from "../config/multer.js";
 
 const router = express.Router();
 
-/* TEST ROUTE (already added and working) */
+/* TEST ROUTE */
 router.get("/__test", (req, res) => {
   res.json({ ok: true });
 });
@@ -19,16 +19,21 @@ router.get("/__test", (req, res) => {
 /* GET ALL PRODUCTS */
 router.get("/", adminProtect, getAllProducts);
 
-/* 🔴 TEMPORARY DEBUG POST ROUTE */
+/* 🔴 DEBUG POST ROUTE — STEP 2 */
 router.post(
   "/",
   adminProtect,
+  upload,
   (req, res) => {
-    res.json({ reached: "after adminProtect" });
+    res.json({
+      reached: "after upload",
+      files: req.files?.length || 0,
+      body: req.body,
+    });
   }
 );
 
-/* ❌ COMMENT THESE FOR NOW
+/* ❌ STILL COMMENTED OUT FOR NOW
 router.post(
   "/",
   adminProtect,
