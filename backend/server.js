@@ -43,17 +43,20 @@ app.use(express.json());
 /* =========================
    ROUTES
 ========================= */
+/* PUBLIC ROUTES */
 app.use("/api/auth", authRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/payment", paymentRoutes);
 
-app.use("/api/admin", adminRoutes);
+/* ADMIN ROUTES — SPECIFIC FIRST */
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/stats", adminStatsRoutes);
 app.use("/api/admin/orders", adminOrdersRoutes);
 app.use("/api/admin/coupons", adminCouponRoutes);
+app.use("/api/admin", adminRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("API running...");
