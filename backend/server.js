@@ -32,15 +32,28 @@ const __dirname = path.dirname(__filename);
 ================================ */
 app.use(
   cors({
-    origin: [
-      "https://vestease.in",
-      "https://www.vestease.in"
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "https://vestease.in",
+        "https://www.vestease.in"
+      ];
+
+      // allow server-to-server & Postman
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    optionsSuccessStatus: 204
   })
 );
+
 
 
 app.use(express.json());
